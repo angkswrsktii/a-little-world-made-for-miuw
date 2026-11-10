@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════
+   A LITTLE WORLD MADE FOR MIUW — global styles
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Subtle film-grain noise tile (SVG turbulence) */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-cream font-body text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-blush text-ink;
+  }
+
+  img {
+    @apply select-none;
+  }
+}
+
+/* ---------- scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fff8f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #efc1ce;
+  border-radius: 8px;
+  border: 2px solid #fff8f5;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a75d75;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COMPONENT CLASSES
+   ══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  /* Primary rose button */
+  .btn-rose {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-deeprose px-8 py-4 font-display text-base text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#96506a] hover:shadow-frame focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-deeprose focus-visible:ring-offset-2 focus-visible:ring-offset-cream active:translate-y-0 sm:text-lg;
+  }
+
+  /* Outline button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-deeprose bg-transparent px-8 py-3.5 font-display text-base text-deeprose transition-all duration-300 hover:bg-deeprose hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-deeprose focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
+  }
+
+  /* Washi tape strip */
+  .washi {
+    position: absolute;
+    top: -0.85rem;
+    height: 1.6rem;
+    width: 5.5rem;
+    opacity: 0.92;
+    box-shadow: 0 2px 6px rgba(81, 64, 68, 0.14);
+    clip-path: polygon(
+      3% 0, 97% 0, 100% 18%, 97% 38%, 100% 58%, 98% 80%, 100% 100%,
+      3% 100%, 0 82%, 3% 60%, 0 40%, 2% 20%
+    );
+  }
+  .washi--blush {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(239, 193, 206, 0.95) 0 0.35rem,
+      rgba(255, 248, 245, 0.95) 0.35rem 0.7rem
+    );
+  }
+  .washi--rose {
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(201, 164, 106, 0.75) 0 0.35rem,
+      rgba(255, 248, 245, 0.9) 0.35rem 0.7rem
+    );
+  }
+  .washi--ivory {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(247, 235, 221, 0.95) 0 0.3rem,
+      rgba(239, 193, 206, 0.75) 0.3rem 0.6rem
+    );
+  }
+
+  /* Static film-grain overlay (use as an absolutely positioned layer) */
+  .grain-bg {
+    background-image: var(--noise);
+  }
+
+  /* Film grain that sits on top of a photo/card */
+  .photo-grain {
+    position: relative;
+  }
+  .photo-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: var(--noise);
+    border-radius: inherit;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   AMBIENT PARTICLES — petals / hearts / sparkles
+   (transform & opacity only, GPU-friendly)
+   ══════════════════════════════════════════════════════════════ */
+
+.petal-fall {
+  position: absolute;
+  top: -9vh;
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.petal-sway {
+  display: block;
+  animation-name: petal-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.petal {
+  display: block;
+  border-radius: 115% 12% 115% 12%;
+  transform: rotate(48deg);
+  box-shadow: inset -2px -3px 5px rgba(167, 93, 117, 0.22);
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--drift, 6vw), 118vh, 0) rotate(320deg);
+    opacity: 0;
+  }
+}
+
+@keyframes petal-sway {
+  0%,
+  100% {
+    transform: translateX(-12px) rotate(-10deg);
+  }
+  50% {
+    transform: translateX(12px) rotate(12deg);
+  }
+}
+
+.heart-float {
+  position: absolute;
+  bottom: -8vh;
+  animation-name: heart-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes heart-rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--peak, 0.4);
+  }
+  85% {
+    opacity: var(--peak, 0.4);
+  }
+  100% {
+    transform: translate3d(var(--drift, 4vw), -116vh, 0);
+    opacity: 0;
+  }
+}
+
+.sparkle {
+  position: absolute;
+  line-height: 1;
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: scale(0.3) rotate(0deg);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1) rotate(80deg);
+    opacity: 0.85;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SMALL DELIGHTS
+   ══════════════════════════════════════════════════════════════ */
+
+/* Candle flame flicker (SVG — transform-box keeps origin at flame base) */
+.candle-flame {
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+  animation: flicker 1.8s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-2deg);
+  }
+  25% {
+    transform: scale(1.08, 1.18) rotate(3deg);
+  }
+  50% {
+    transform: scale(0.9, 0.85) rotate(-4deg);
+  }
+  75% {
+    transform: scale(1.05, 1.12) rotate(2deg);
+  }
+}
+
+/* Softly pulsing glowing hearts */
+.glow-heart {
+  animation: glow-pulse 3.2s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.12);
+  }
+}
+
+/* Typewriter caret */
+.type-caret::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.12em;
+  background: currentColor;
+  animation: caret-blink 0.9s steps(1) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION — calm, static experience
+   ══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .petal-fall,
+  .heart-float,
+  .sparkle,
+  .glow-heart,
+  .candle-flame,
+  .type-caret::after {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
